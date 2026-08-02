@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Opiniones | Las Gaviotas</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<header>
+
+    <nav class="navbar">
+
+        <div class="logo">
+
+            <img src="img/logo.png" alt="Las Gaviotas">
+
+            <h1>Las Gaviotas</h1>
+
+        </div>
+
+        <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+
+        <ul class="nav-links">
+
+            <li><a href="index.html">Home</a></li>
+
+            <li><a href="reserva.html">Reservar</a></li>
+
+            <li><a href="opiniones.html" class="active">Opiniones</a></li>
+
+        </ul>
+
+    </nav>
+
+</header>
+
+<main>
+
+<section class="page-hero">
+
+    <span class="badge">OPINIONES</span>
+
+    <h2>Lo que dicen nuestros huéspedes</h2>
+
+    <p>Experiencias reales de quienes ya vivieron Las Gaviotas.</p>
+
+</section>
+
+<section class="opiniones-section">
+
+    <div class="opiniones-summary" id="opiniones-summary">
+        <!-- promedio de calificación, se completa por JS -->
+    </div>
+
+    <div class="opiniones-grid" id="opiniones-grid">
+        <!-- tarjetas de opiniones, se completan por JS -->
+    </div>
+
+    <div class="opinion-form-wrap">
+
+        <h3>Dejá tu opinión</h3>
+
+        <form id="opinion-form" class="opinion-form" novalidate>
+
+            <div class="form-row">
+                <div class="field">
+                    <label for="op-nombre">Tu nombre</label>
+                    <input type="text" id="op-nombre" name="nombre" placeholder="Ej: Juan Pérez" required>
+                    <span class="field-error" data-error-for="op-nombre"></span>
+                </div>
+
+                <div class="field">
+                    <label for="op-calificacion">Calificación</label>
+                    <select id="op-calificacion" name="calificacion" required>
+                        <option value="5">★★★★★ Excelente</option>
+                        <option value="4">★★★★☆ Muy bueno</option>
+                        <option value="3">★★★☆☆ Bueno</option>
+                        <option value="2">★★☆☆☆ Regular</option>
+                        <option value="1">★☆☆☆☆ Malo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="op-comentario">Tu comentario</label>
+                <textarea id="op-comentario" name="comentario" rows="3" placeholder="Contanos cómo fue tu estadía..." required></textarea>
+                <span class="field-error" data-error-for="op-comentario"></span>
+            </div>
+
+            <button type="submit" class="btn-primary btn-block">Publicar opinión</button>
+
+            <p class="opinion-form-msg" id="opinion-form-msg"></p>
+
+        </form>
+
+    </div>
+
+</section>
+
+</main>
+
+<footer>
+
+    <div class="footer-container">
+
+        <div class="footer-brand">
+
+            <h2>Las Gaviotas</h2>
+
+            <p>
+                Elevando la hospitalidad a una forma de arte.
+                Su escape de lujo le espera.
+            </p>
+
+        </div>
+
+        <div class="footer-contact">
+
+            <h3>CONTACTOS</h3>
+
+            <p>📧 contacto@lasgaviotas.com</p>
+
+            <p>📞 +598 4000 0000</p>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        © 2026 Las Gaviotas. Todos los derechos reservados. · <a href="admin.html">Panel de administración</a>
+
+    </div>
+
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/opiniones.js"></script>
+
+</body>
+
+</html>
