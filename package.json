@@ -1,0 +1,14 @@
+{
+  "name": "las-gaviotas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sitio del hotel Las Gaviotas — HTML5, CSS3 y JavaScript Vanilla. Jest se usa únicamente como herramienta de testing (no forma parte del código que corre en el navegador).",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  }
+}

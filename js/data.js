@@ -54,6 +54,58 @@ const LG = {
     return this.ROOMS.find((r) => r.id === id) || null;
   },
 
+  /* ---------------- Fechas / validación (lógica pura, testeable) ---------------- */
+
+  nightsBetween(checkin, checkout) {
+    if (!checkin || !checkout) return 0;
+    const start = new Date(checkin);
+    const end = new Date(checkout);
+    const diff = Math.round((end - start) / (1000 * 60 * 60 * 24));
+    return diff > 0 ? diff : 0;
+  },
+
+  validarDatosReserva({ nombre, email, telefono, habitacionId, checkin, checkout, huespedes }) {
+    const errores = {};
+
+    if (!nombre || nombre.trim().length < 3) {
+      errores.nombre = "Ingresá tu nombre completo.";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email.trim())) {
+      errores.email = "Ingresá un correo electrónico válido.";
+    }
+
+    if (!telefono || telefono.trim().length < 6) {
+      errores.telefono = "Ingresá un teléfono de contacto válido.";
+    }
+
+    const room = this.getRoom(habitacionId);
+    if (!room) {
+      errores.habitacion = "Elegí un tipo de habitación.";
+    }
+
+    if (!checkin) {
+      errores.checkin = "Elegí la fecha de entrada.";
+    }
+
+    const noches = this.nightsBetween(checkin, checkout);
+    if (!checkout) {
+      errores.checkout = "Elegí la fecha de salida.";
+    } else if (checkin && noches <= 0) {
+      errores.checkout = "Debe ser posterior a la fecha de entrada.";
+    }
+
+    const numHuespedes = Number(huespedes);
+    if (!numHuespedes || numHuespedes < 1) {
+      errores.huespedes = "Ingresá la cantidad de huéspedes.";
+    } else if (room && numHuespedes > room.capacidad) {
+      errores.huespedes = `Esta habitación admite hasta ${room.capacidad} huéspedes.`;
+    }
+
+    return { ok: Object.keys(errores).length === 0, errores, noches, room };
+  },
+
   /* ---------------- Reservas ---------------- */
 
   getReservas() {
@@ -66,7 +118,8 @@ const LG = {
 
   saveReserva(data) {
     const reservas = this.getReservas();
-    const codigo = "LG-" + Date.now().toString(36).toUpperCase();
+    const sufijo = Math.random().toString(36).slice(2, 6).toUpperCase();
+    const codigo = "LG-" + Date.now().toString(36).toUpperCase() + sufijo;
     const reserva = {
       id: codigo,
       estado: "pendiente", // pendiente | confirmada | cancelada
@@ -133,7 +186,7 @@ const LG = {
   saveOpinion(data) {
     const opiniones = this.getOpiniones();
     const opinion = {
-      id: "op-" + Date.now().toString(36),
+      id: "op-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
       creada: new Date().toISOString(),
       ...data,
     };
@@ -153,3 +206,9 @@ const LG = {
     return "US$ " + Number(n).toLocaleString("es-UY");
   },
 };
+
+// Permite requerir este archivo desde Jest (Node) sin afectar
+// su uso normal como <script> en el navegador.
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = LG;
+}

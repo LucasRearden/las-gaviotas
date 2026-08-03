@@ -33,17 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ---------- Resumen en vivo ---------- */
-  function nightsBetween(a, b) {
-    if (!a || !b) return 0;
-    const start = new Date(a);
-    const end = new Date(b);
-    const diff = Math.round((end - start) / (1000 * 60 * 60 * 24));
-    return diff > 0 ? diff : 0;
-  }
-
   function renderSummary() {
     const room = LG.getRoom(selectHabitacion.value) || LG.ROOMS[0];
-    const noches = nightsBetween(inputCheckin.value, inputCheckout.value);
+    const noches = LG.nightsBetween(inputCheckin.value, inputCheckout.value);
     const total = noches * room.precio;
 
     summaryBox.innerHTML = `
@@ -77,7 +69,10 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   renderSummary();
 
-  /* ---------- Validación ---------- */
+  /* ---------- Validación ----------
+     La lógica de validación vive en LG.validarDatosReserva (js/data.js),
+     que es una función pura y está cubierta por tests de Jest.
+     Acá solo mapeamos el resultado a mensajes de error en el DOM. */
   function setError(field, message) {
     const span = form.querySelector(`.field-error[data-error-for="${field}"]`);
     const input = form.querySelector(`#${field}`);
@@ -86,70 +81,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function validate() {
-    let ok = true;
+    const { ok, errores } = LG.validarDatosReserva({
+      nombre: form.nombre.value,
+      email: form.email.value,
+      telefono: form.telefono.value,
+      habitacionId: form.habitacion.value,
+      checkin: inputCheckin.value,
+      checkout: inputCheckout.value,
+      huespedes: inputHuespedes.value,
+    });
 
-    const nombre = form.nombre.value.trim();
-    if (nombre.length < 3) {
-      setError("nombre", "Ingresá tu nombre completo.");
-      ok = false;
-    } else {
-      setError("nombre", "");
-    }
-
-    const email = form.email.value.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError("email", "Ingresá un correo electrónico válido.");
-      ok = false;
-    } else {
-      setError("email", "");
-    }
-
-    const telefono = form.telefono.value.trim();
-    if (telefono.length < 6) {
-      setError("telefono", "Ingresá un teléfono de contacto válido.");
-      ok = false;
-    } else {
-      setError("telefono", "");
-    }
-
-    if (!form.habitacion.value) {
-      setError("habitacion", "Elegí un tipo de habitación.");
-      ok = false;
-    } else {
-      setError("habitacion", "");
-    }
-
-    const checkin = inputCheckin.value;
-    const checkout = inputCheckout.value;
-    if (!checkin) {
-      setError("checkin", "Elegí la fecha de entrada.");
-      ok = false;
-    } else {
-      setError("checkin", "");
-    }
-
-    if (!checkout) {
-      setError("checkout", "Elegí la fecha de salida.");
-      ok = false;
-    } else if (checkin && nightsBetween(checkin, checkout) <= 0) {
-      setError("checkout", "Debe ser posterior a la fecha de entrada.");
-      ok = false;
-    } else {
-      setError("checkout", "");
-    }
-
-    const room = LG.getRoom(form.habitacion.value);
-    const huespedes = Number(inputHuespedes.value);
-    if (!huespedes || huespedes < 1) {
-      setError("huespedes", "Ingresá la cantidad de huéspedes.");
-      ok = false;
-    } else if (room && huespedes > room.capacidad) {
-      setError("huespedes", `Esta habitación admite hasta ${room.capacidad} huéspedes.`);
-      ok = false;
-    } else {
-      setError("huespedes", "");
-    }
+    ["nombre", "email", "telefono", "habitacion", "checkin", "checkout", "huespedes"].forEach(
+      (campo) => setError(campo, errores[campo] || "")
+    );
 
     return ok;
   }
@@ -163,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const room = LG.getRoom(form.habitacion.value);
-    const noches = nightsBetween(inputCheckin.value, inputCheckout.value);
+    const noches = LG.nightsBetween(inputCheckin.value, inputCheckout.value);
 
     const reserva = LG.saveReserva({
       nombre: form.nombre.value.trim(),
